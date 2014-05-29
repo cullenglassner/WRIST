@@ -20,7 +20,7 @@
             <p>There is no user associated with that UID.</p>
         {% endif %}
 
-        <form method="post" action=".">
+        <form method="post" action="."> {% csrf_token %}
             <p>
                 <label for="id_uid">UID:</label>
                 {{ form.uid }}

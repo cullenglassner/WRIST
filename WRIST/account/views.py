@@ -1,22 +1,20 @@
+# Control
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate, login, logout
-from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
-
-# Added for login view
-from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout, get_user_model
-from django.contrib.sites.models import get_current_site
-from django.contrib.auth.forms import AuthenticationForm
-from django.template.response import TemplateResponse
-
-# Import a user registration form
-from account.forms import *
 from django.shortcuts import get_object_or_404, render_to_response, render
 
-# Import for json
-import json
+# Security
+from django.core.context_processors import csrf
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+
+# Authentication
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+
+# Account forms
+from account.forms import *
+
+
 
 
 
@@ -36,7 +34,7 @@ def is_mobile(request):
         AUTHENTICATION VIEWS
 """
 # User Register View
-@csrf_protect
+@csrf_exempt
 def user_register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -101,18 +99,25 @@ def user_profile(request):
 def user_profile_edit(request):
     form = UserEditForm()
     if request.method == 'POST':
-        
         form = UserEditForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             phone_number = form.cleaned_data['phone_number']
             gender = form.cleaned_data['gender']
+            residence_city = form.cleaned_data['residence_city']
+            residence_state = form.cleaned_data['residence_state']
+            job_title = form.cleaned_data['job_title']
+            job_employer = form.cleaned_data['job_employer']
 
             request.user.first_name = first_name
             request.user.last_name = last_name
             request.user.phone_number = phone_number
             request.user.gender = gender
+            request.user.residence_city = residence_city
+            request.user.residence_state = residence_state
+            request.user.job_title = job_title
+            request.user.job_employer = job_employer
             request.user.save()
             return HttpResponseRedirect('/account/profile/')
     else:
@@ -124,6 +129,10 @@ def user_profile_edit(request):
                 'phone_number':request.user.phone_number,
                 'bio':request.user.bio,
                 'gender':request.user.gender,
+                'residence_city':request.user.residence_city,
+                'residence_state':request.user.residence_state,
+                'job_title':request.user.job_title,
+                'job_employer':request.user.job_employer,
             },
         )
     return render(request, 'account/edit.html', {'form':form,
@@ -143,11 +152,9 @@ def public_profile(request, user_uid):
                                                               'is_mobile':is_mobile(request)})
 
 # Add contact by UID
-@csrf_protect
-@login_required(redirect_field_name='account/login.html')
-def add_contact(request, contact_uid):
-    target_user = get_object_or_404(get_user_model(), uid=contact_uid)
-    # request.user.contacts.add(target_user.id)
-    request.user.create_relationship(target_user)
-    # request.user.save()
-    return HttpResponseRedirect('/contacts/')
+#@csrf_protect
+#@login_required(redirect_field_name='account/login.html')
+#def add_contact(request, contact_uid):
+#    target_user = get_object_or_404(get_user_model(), uid=contact_uid)
+#    request.user.create_relationship(target_user)
+#    return HttpResponseRedirect('/contacts/')

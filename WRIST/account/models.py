@@ -41,18 +41,18 @@ class UserProfileManager(BaseUserManager):
         return user
 
 class UserProfile(AbstractBaseUser):
+    # Required fields
     email = models.EmailField(verbose_name='email address',
                               max_length=255,
                               unique=True)
     uid = models.CharField(max_length=16, unique=True)
+    
+    # Basic info
     first_name = models.CharField(max_length=16, blank=True)
     last_name = models.CharField(max_length=16, blank=True)
-    contacts = models.ManyToManyField('self', 
-                                      through='Relationship',
-                                      symmetrical=False, 
-                                      related_name='related_to')
     phone_number = models.CharField(max_length=15, blank=True)
-    bio = models.CharField(max_length=160, blank=True)
+
+    # Gender
     NONE = 'NA'
     MALE = 'MA'
     FEMALE = 'FE'
@@ -64,6 +64,25 @@ class UserProfile(AbstractBaseUser):
     gender = models.CharField(max_length=2,
                               choices=GENDER_CHOICES,
                               default=NONE)
+
+
+    # Location
+    residence_city = models.CharField(max_length=32, blank=True)
+    residence_state = models.CharField(max_length=32, blank=True)
+
+    # Misc.
+    bio = models.CharField(max_length=160, blank=True)
+    contacts = models.ManyToManyField('self', 
+                                      through='Relationship',
+                                      symmetrical=False, 
+                                      related_name='related_to')
+
+
+    # Job fields
+    job_title = models.CharField(max_length=32, blank=True)
+    job_employer = models.CharField(max_length=32, blank=True)
+
+    # Permissions
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -104,7 +123,7 @@ class UserProfile(AbstractBaseUser):
         return self.is_admin
 
 
-    def create_relationship(self, contact, symm=True):
+    def create_relationship(self, contact, symm=True, **kwargs):
         relationship, create = Relationship.objects.get_or_create(from_user=self,
                                                           to_user=contact)
         try:
