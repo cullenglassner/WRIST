@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+
+{% comment %}
+    Remove contacts from your contact list on this page.
+{% endcomment %}
+
+{% block head %}
+    <title>WRIST | Remove Contact</title>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>WRIST</h1>
+        <h2>Remove Contact</h2>
+    </header>
+
+    <section>
+        {% if form.errors %}
+            <p>You have no contact with that UID.</p>
+        {% endif %}
+
+        <form method="post" action=".">
+            <p>
+                <label for="id_uid">UID:</label>
+                {{ form.uid }}
+            </p>
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+            {% else %}
+                <input type="hidden" name="next" value="/contacts/" />
+            {% endif %}
+            <input type="submit" name="remove" value="remove" />
+        </form>
+    </section>
+{% endblock %}

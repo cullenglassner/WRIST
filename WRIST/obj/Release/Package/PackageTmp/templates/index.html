@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+
+{% comment %}
+    Main page of WRIST website.
+{% endcomment %}
+
+{% block head %}
+    <title>WRIST</title>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>WRIST</h1>
+    </header>
+
+    <section>
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.first_name }}.
+            <br />Your UID is {{ user.uid }}</p>
+            <p>Please click here to <a href="/contacts/">view your contacts</a>.</p>
+        {% else %}
+            <p>Welcome, new user. Please <a href="/account/login/">log in</a>.</p>
+            <p>If you would like to create an account, <a href="/account/register/">register here</a>.</p>
+        {% endif %}
+    </section>
+{% endblock %}

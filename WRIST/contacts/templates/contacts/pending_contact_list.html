@@ -1,0 +1,37 @@
+﻿{% extends "base.html" %}
+
+{% comment %}
+    This is the pending contact list page.
+{% endcomment %}
+
+{% block head %}
+    <title>{% block title %}WRIST | Pending Contacts{% endblock %}</title>
+    <style type="text/css">
+        .tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}
+        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;border-top-width:1px;border-bottom-width:1px;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;border-top-width:1px;border-bottom-width:1px;}
+        .tg .tg-s6z2{text-align:center}
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>WRIST | Pending Contacts</h1>
+    </header>
+    {% if user.first_name %}<p> Welcome, {{ user.first_name }}! </br></p>{% endif %}
+    <table class="tg" width="100%">
+        <tr>
+            <th class="tg-s6z2" colspan="2">Pending Requests: {{ pending_contact_list|length }}</th>
+        </tr>
+        {% for pending_contact in pending_contact_list %}
+            <tr class="tg-031e">
+                <td class="tg-031e">{{ pending_contact.first_name }} {{ pending_contact.last_name }}</td>
+            </tr>
+        {% empty %}
+            <tr class="tg-031e">
+                <td class="tg-031e">No pending requests.</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

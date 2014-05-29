@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        {% block head %}{% endblock %}
+        <title></title>
+    </head>
+    {% if not is_mobile %}{% block header %}{% include "header.html" %}{% endblock %}{% endif %}
+
+    <body>
+        <font face="trebuchet ms" />
+        {% block body %}{% endblock %}
+    </body>
+
+    {% if not is_mobile %}{% block footer %}{% include "footer.html" %}{% endblock %}{% endif %}
+</html>

@@ -1,0 +1,22 @@
+﻿{% extends "base.html" %}
+
+{% comment %}
+    User profile page.
+{% endcomment %}
+
+{% block head %}
+    <title>{{ user.get_full_name }} | WRIST</title>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <h1>{{ user.get_full_name }}</h1><a href="/account/edit">edit</a>
+    </header>
+
+    <table>
+        <tr>
+            <td>{{ user.email }} &middot; {{ user.phone_number }}</td>
+        </tr>
+    </table>
+
+{% endblock %}
