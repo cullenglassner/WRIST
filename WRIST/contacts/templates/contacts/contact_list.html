@@ -11,6 +11,147 @@
         .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;border-top-width:1px;border-bottom-width:1px;}
         .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;border-top-width:1px;border-bottom-width:1px;}
         .tg .tg-s6z2{text-align:center}
+        
+        .pending_contacts_nav {
+            background:#fff;
+            width:100%;
+            height:80px;
+            margin:0px;
+            padding:0px;
+        }
+
+        /* main menu styles */
+        #pending_contacts_nav {
+            display:inline-block;
+            width:100%;
+            margin:0px auto;
+            padding:0;
+            background:#26ade4;
+
+            border-radius:10px;
+            -moz-border-radius:10px;
+            -webkit-border-radius:10px;
+        }
+        #pending_contacts_nav li {
+            margin:10px;
+            float:left;
+            position:relative;
+            list-style:none;
+        }
+        #pending_contacts_nav a {
+            font-weight:bold;
+            color:#e7e5e5;
+            text-decoration:none;
+            display:block;
+            padding:8px 20px;
+
+            border-radius:10px; /*some css3*/
+            -moz-border-radius:10px;
+            -webkit-border-radius:10px;
+            /*text-shadow:0 2px 2px rgba(0,0,0, .7);*/
+        }
+
+        /* selected menu element */
+        #pending_contacts_nav li:hover > a {
+            background:#7788aa;
+            color:#000;
+        }
+
+        /* sublevels */
+        #pending_contacts_nav ul li:hover a, #pending_contacts_nav li:hover li a {
+            background:none;
+            border:none;
+            color:#000;
+        }
+        #pending_contacts_nav ul li a:hover {
+            background:#335599;
+            color:#fff;
+
+            border-radius:10px; /*some css3*/
+            -moz-border-radius:10px;
+            -webkit-border-radius:10px;
+        }
+
+        #pending_contacts_nav ul li:first-child > a {
+            -moz-border-radius-topleft:10px; /*some css3*/
+            -moz-border-radius-topright:10px;
+            -webkit-border-top-left-radius:10px;
+            -webkit-border-top-right-radius:10px;
+        }
+        #pending_contacts_nav ul li:last-child > a {
+            -moz-border-radius-bottomleft:10px; /*some css3*/
+            -moz-border-radius-bottomright:10px;
+            -webkit-border-bottom-left-radius:10px;
+            -webkit-border-bottom-right-radius:10px;
+        }
+
+        /* drop down */
+        #pending_contacts_nav li:hover > ul {
+            opacity:1;
+            visibility:visible;
+        }
+        #pending_contacts_nav ul {
+            opacity:0;
+            visibility:hidden;
+            padding:0;
+            width:175px;
+            position:absolute;
+            background:#7788aa;/*#aabbcc;*/
+            border:1px solid #7788aa;
+
+            border-radius:10px; /*some css3*/
+            -moz-border-radius:10px;
+            -webkit-border-radius:10px;
+            box-shadow:0 2px 2px rgba(0,0,0, .5);
+            -moz-box-shadow:0 2px 2px rgba(0,0,0, .5);
+            -webkit-box-shadow:0 2px 2px rgba(0,0,0, .5);
+
+            -moz-transition:opacity .25s linear, visibility .1s linear .1s;
+            -webkit-transition:opacity .25s linear, visibility .1s linear .1s;
+            -o-transition:opacity .25s linear, visibility .1s linear .1s;
+            transition:opacity .25s linear, visibility .1s linear .1s;
+        }
+        #pending_contacts_nav ul li {
+            float:none;
+            margin:0;
+        }
+        #pending_contacts_nav ul a {
+            font-weight:normal;
+            text-shadow:0 2px 2px rgba(255,255,255, 0.7);
+        }
+        #pending_contacts_nav ul ul {
+            left:160px;
+            top:0px;
+        }
+
+        #menu {
+            width: 100%;
+            height: 35px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: justify;
+            background-color: #8AD9FF;
+                border-radius: 8px;
+        }
+            #menu ul {
+                height: auto;
+                padding: 8px 0px;
+                margin: 0px;
+            }
+            #menu li {
+                display: inline;
+                width: 60px;
+                padding: 10px;
+            }
+            #menu a {
+                text-decoration: none;
+                color: #00F;
+                padding: 8px 8px 8px 8px;
+            }
+                #menu a:hover {
+                    color:#4c6683;
+                    background-color:#FFF;
+                }
     </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
@@ -32,26 +173,39 @@
 {% endblock %}
 
 {% block body %}
+
+    {% if not is_mobile %}
     <header>
-        <h1>WRIST | Contacts</h1>
+        <h1>WRIST</h1>
+        <h2>Contacts</h2>
     </header>
+    {% endif %}
+
     <div id="table_header">
-        Contacts {% if pending_contact_list %}
-                    <select id="pending_dropdown">
-                        <option></option>
+        {% if pending_contact_list %}
+            <ul id="pending_contacts_nav">
+                <li>{{ pending_contact_list|length }} Pending contact{% if pending_contact_list|length > 1 %}s{% endif %}
+                    <ul>
                         {% for p_contact in pending_contact_list %}
-                            <option>{{ p_contact.first_name }} {{ p_contact.last_name }}</option>
+                            <li>
+                                <a href="/contacts/add_pending_contact/{{ p_contact.uid }}/">{{ p_contact.get_full_name }}</a>
+                            </li>
                         {% endfor %}
-                    </select>
-                    (<a href="pending/">{{ pending_contact_list|length }} Pending</a>)
-                {% endif %}
+                    </ul>
+                </li>
+            </ul>
+            <br />
+        {% endif %}
+        
         <input type="text" id="search" placeholder="Search" />
     </div>
+
     <table id="table" class="tg" width="100%">
-        {% for contact in contact_list %}
+        {% for relationship in contact_list %}
             <tr class="tg-031e">
-                <td class="tg-031e"><a href="/account/profile/{{ contact.uid }}">{{ contact.first_name }} {{ contact.last_name }}</a></td>
-                <td class="tg-031e">{{ contact.phone_number }}</td>
+                <td class="tg-031e"><a href="/account/profile/{{ relationship.to_user.uid }}">{{ relationship.to_user.get_full_name }}</a></td>
+                <td class="tg-031e">{{ relationship.to_user.phone_number }}</td>
+                <td class="tg-031e">{{ relationship.address }}</td>
             </tr>
         {% empty %}
             <tr class="tg-031e">

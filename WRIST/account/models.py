@@ -15,6 +15,14 @@ RELATIONSHIP_STATUSES = (
                          (RELATIONSHIP_PENDING, 'Pending'),
                          )
 
+NONE = 'NA'
+CA = 'CA'
+WA = 'WA'
+STATE_CHOISES = (
+    (NONE, '--'),
+    (CA, 'California'),
+    (WA, 'Washington'),
+    )
 
 class UserProfileManager(BaseUserManager):
     def create_user(self, email, uid, password=None):
@@ -68,7 +76,10 @@ class UserProfile(AbstractBaseUser):
 
     # Location
     residence_city = models.CharField(max_length=32, blank=True)
-    residence_state = models.CharField(max_length=32, blank=True)
+    residence_state = models.CharField(max_length=2,
+                                       choices=STATE_CHOISES,
+                                       default=NONE)
+    #residence_state = models.CharField(max_length=32, blank=True)
 
     # Misc.
     bio = models.CharField(max_length=160, blank=True)
@@ -123,9 +134,10 @@ class UserProfile(AbstractBaseUser):
         return self.is_admin
 
 
-    def create_relationship(self, contact, symm=True, **kwargs):
+    def create_relationship(self, contact, address, symm=True, **kwargs):
         relationship, create = Relationship.objects.get_or_create(from_user=self,
-                                                          to_user=contact)
+                                                          to_user=contact,
+                                                          address=address)
         try:
             pair_relationship = Relationship.objects.get(from_user=contact,
                                                          to_user=self)
@@ -137,6 +149,8 @@ class UserProfile(AbstractBaseUser):
             relationship.status = RELATIONSHIP_ACCPTED  
             relationship.save()
             pair_relationship.status = RELATIONSHIP_ACCPTED
+            if not pair_relationship.address:
+                pair_relationship.address = address
             pair_relationship.save()
         return relationship
 
@@ -149,17 +163,27 @@ class UserProfile(AbstractBaseUser):
             contact.remove_relationship(self, status, False)
 
     def get_relationships(self, status):
-        return Relationship.objects.filter(to_user=self,
+        return Relationship.objects.filter(from_user=self,
                                            status=status)
 
+#class Location(models.Model):
+#    name = models.CharField(max_length=128, blank=True)
+#    address = models.CharField(max_length=256, blank=True)
+#    latitude = models.DecimalField(max_digits=6, decimal_places=3)
+#    longitude = models.DecimalField(max_digits=6, decimal_places=3)
 
+#    def __unicode__(self):
+#        return "Location"
+    
 class Relationship(models.Model):
     to_user = models.ForeignKey(UserProfile, related_name='from_users')
     from_user = models.ForeignKey(UserProfile, related_name='to_users')
     status = models.IntegerField(choices=RELATIONSHIP_STATUSES,
                                  default=RELATIONSHIP_PENDING)
     date_requested = models.DateField(auto_now_add=True)
-    address = models.CharField(max_length=1023)
+    address = models.CharField(max_length=256, blank=True)
+    
+#    location = models.ForeignKey(Location, related_name='location')
     
     class Meta:
         verbose_name = _('relationship')

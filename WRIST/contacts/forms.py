@@ -6,7 +6,7 @@ from django.contrib.admin.widgets import AdminDateWidget
 class AddContactForm(forms.Form):
     
     uid = forms.CharField(label=_("UID"), max_length=16)
-    # date = DateField(label=_("DATE"), widget = AdminDateWidget)
+    address = forms.CharField(label=_("Address"), max_length=256)
 
 
     error_messages = {
@@ -21,6 +21,7 @@ class AddContactForm(forms.Form):
 
     def clean(self):
         uid = self.cleaned_data.get('uid')
+        address = self.cleaned_data.get('address')
 
         if uid:
             self.user_cache = get_user_model().objects.get(uid=uid)

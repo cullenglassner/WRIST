@@ -9,10 +9,7 @@
 {% endblock %}
 
 {% block body %}
-    <header>
-        <h1>{{ user.get_full_name }}</h1>
-    </header>
-
+    <h1>{{ user.get_full_name }}</h1>
     <div id="basic_info">
         <p>
             <b>{{ user.job_title }}</b><br />
@@ -21,5 +18,4 @@
             {{ user.email }} &middot; {{ user.phone_number }}<br />
         </p>
     </div>
-
 {% endblock %}

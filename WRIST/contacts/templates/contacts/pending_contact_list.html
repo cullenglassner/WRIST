@@ -15,13 +15,9 @@
 {% endblock %}
 
 {% block body %}
-    <header>
-        <h1>WRIST | Pending Contacts</h1>
-    </header>
-    {% if user.first_name %}<p> Welcome, {{ user.first_name }}! </br></p>{% endif %}
     <table class="tg" width="100%">
         <tr>
-            <th class="tg-s6z2" colspan="2">Pending Requests: {{ pending_contact_list|length }}</th>
+            <th class="tg-s6z2" colspan="2">Pending Contact: {{ pending_contact_list|length }}</th>
         </tr>
         {% for pending_contact in pending_contact_list %}
             <tr class="tg-031e">

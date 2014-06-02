@@ -42,7 +42,8 @@ def contacts_list(request):
     contact_list = []
     pending_contact_list = []
     for relationship in relationship_list:
-        contact_list.append(relationship.from_user)
+        contact_list.append(relationship)
+        #contact_list.append(relationship.from_user)
     for p_relationship in pending_relationship_list:
         pending_contact_list.append(p_relationship.from_user)
     return render_to_response('contacts/contact_list.html', 
@@ -69,26 +70,28 @@ def pending_contacts_list(request):
 
 @csrf_exempt
 @login_required(redirect_field_name='account/login.html')
-def add_contact_web(request):
+def add_contact(request):
     form = AddContactForm()
     if request.method == "POST":
         form = AddContactForm(request, data=request.POST)
         if form.is_valid():
             uid = form.cleaned_data['uid']
+            address = form.cleaned_data['address']
             target_user = get_object_or_404(get_user_model(), uid=uid)
-            request.user.create_relationship(target_user)
+            request.user.create_relationship(target_user, address)
             request.user.save()
             #return render_to_response('countacts/contact_list.html', {'user':request.user,
             #                                                          'is_mobile':is_mobile(request)})
             return HttpResponseRedirect('/contacts/')
     else:
         form = AddContactForm()
-    return render_to_response('contacts/add.html', {'form': form,
+    return render_to_response('contacts/add.html', {'user':request.user,'uid':request.user.uid,
+                                                    'form':form,
                                                     'is_mobile':is_mobile(request)})
 
 @csrf_exempt
 @login_required(redirect_field_name='account/login.html')
-def remove_contact_web(request):
+def remove_contact(request):
     form = RemoveContactForm()
     if request.method == "POST":
         form = RemoveContactForm(request, data=request.POST)
@@ -101,7 +104,8 @@ def remove_contact_web(request):
             return HttpResponseRedirect('/contacts/')
     else:
         form = RemoveContactForm()
-    return render_to_response('contacts/remove.html', {'form': form,
+    return render_to_response('contacts/remove.html', {'user':request.user, 'uid':request.user.uid,
+                                                       'form': form,
                                                        'is_mobile':is_mobile(request)})
 
 
@@ -110,16 +114,21 @@ def remove_contact_web(request):
 ########################### OPEN API VIEWS ###########################
 @csrf_exempt
 @login_required(redirect_field_name='account/login.html')
-def add_contact(request, contact_uid, address):
+def add_contact_url(request, contact_uid, address):
     target_user = get_object_or_404(get_user_model(), uid=contact_uid)
-    # request.user.contacts.add(target_user.id)
-    request.user.create_relationship(target_user)
-    # request.user.save()
+    request.user.create_relationship(target_user, address)
     return HttpResponseRedirect('/contacts/')
 
 @csrf_exempt
 @login_required(redirect_field_name='account/login.html')
-def remove_contact(request, contact_uid):
+def add_pending_contact_url(request, contact_uid):
+    target_user = get_object_or_404(get_user_model(), uid=contact_uid)
+    request.user.create_relationship(target_user, "")
+    return HttpResponseRedirect('/contacts/')
+
+@csrf_exempt
+@login_required(redirect_field_name='account/login.html')
+def remove_contact_url(request, contact_uid):
     target_user = get_object_or_404(get_user_model(), uid=contact_uid)
     # request.user.contacts.add(target_user.id)
     request.user.create_relationship(target_user)

@@ -7,8 +7,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
 	url(r'^$', main_page),
 
-	# JSON Login view
-    # url(r'^json_login/$', json_login_page),
 
     # Contacts APP URLs
 	url(r'^contacts/', include('contacts.urls')),

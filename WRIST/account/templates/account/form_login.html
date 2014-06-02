@@ -21,6 +21,7 @@
 
         <form method="post" id="login_form" action="."> {% csrf_token %}
             {{ form.as_ul }}
+            <input type="hidden" name="next" value="/contacts/" />
             <input type="submit" name="submit" value="Submit" />
         </form>
     </section>
