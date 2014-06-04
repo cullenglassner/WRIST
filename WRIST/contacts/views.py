@@ -37,13 +37,12 @@ def is_mobile(request):
 def contacts_list(request):
     user = request.user
     uid = request.user.uid
-    relationship_list = user.get_relationships(1)
-    pending_relationship_list = user.get_relationships(3)
+    relationship_list = user.get_relationships()
+    pending_relationship_list = user.get_pending_relationships()
     contact_list = []
     pending_contact_list = []
     for relationship in relationship_list:
         contact_list.append(relationship)
-        #contact_list.append(relationship.from_user)
     for p_relationship in pending_relationship_list:
         pending_contact_list.append(p_relationship.from_user)
     return render_to_response('contacts/contact_list.html', 
@@ -57,7 +56,7 @@ def contacts_list(request):
 def pending_contacts_list(request):
     user = request.user
     uid = request.user.uid
-    pending_relationship_list = user.get_relationships(3)
+    pending_relationship_list = user.get_pending_relationships()
     pending_contact_list = []
     for relationship in pending_relationship_list:
         pending_contact_list.append(relationship.from_user)
@@ -79,7 +78,7 @@ def add_contact(request):
             address = form.cleaned_data['address']
             target_user = get_object_or_404(get_user_model(), uid=uid)
             request.user.create_relationship(target_user, address)
-            request.user.save()
+            #request.user.save()
             #return render_to_response('countacts/contact_list.html', {'user':request.user,
             #                                                          'is_mobile':is_mobile(request)})
             return HttpResponseRedirect('/contacts/')

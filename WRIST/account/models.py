@@ -79,7 +79,6 @@ class UserProfile(AbstractBaseUser):
     residence_state = models.CharField(max_length=2,
                                        choices=STATE_CHOISES,
                                        default=NONE)
-    #residence_state = models.CharField(max_length=32, blank=True)
 
     # Misc.
     bio = models.CharField(max_length=160, blank=True)
@@ -136,8 +135,9 @@ class UserProfile(AbstractBaseUser):
 
     def create_relationship(self, contact, address, symm=True, **kwargs):
         relationship, create = Relationship.objects.get_or_create(from_user=self,
-                                                          to_user=contact,
-                                                          address=address)
+                                                          to_user=contact)
+#                                                          address=address)
+        relationship.address = address
         try:
             pair_relationship = Relationship.objects.get(from_user=contact,
                                                          to_user=self)
@@ -162,9 +162,12 @@ class UserProfile(AbstractBaseUser):
         if symm:
             contact.remove_relationship(self, status, False)
 
-    def get_relationships(self, status):
+    def get_relationships(self):
         return Relationship.objects.filter(from_user=self,
-                                           status=status)
+                                           status=RELATIONSHIP_ACCPTED)
+    def get_pending_relationships(self):
+        return Relationship.objects.filter(to_user=self,
+                                           status=RELATIONSHIP_PENDING)
 
 #class Location(models.Model):
 #    name = models.CharField(max_length=128, blank=True)

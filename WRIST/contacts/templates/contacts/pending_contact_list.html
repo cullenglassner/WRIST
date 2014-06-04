@@ -21,7 +21,7 @@
         </tr>
         {% for pending_contact in pending_contact_list %}
             <tr class="tg-031e">
-                <td class="tg-031e">{{ pending_contact.first_name }} {{ pending_contact.last_name }}</td>
+                <td class="tg-031e"><a href="/contacts/add_pending_contact/{{ pending_contact.uid }}/">{{ pending_contact.get_full_name }}</a></td>
             </tr>
         {% empty %}
             <tr class="tg-031e">

@@ -5,8 +5,10 @@ urlpatterns = patterns('',
 
 
     # Account authentication
-    url(r'^register/$', user_register, name='register'),
-    url(r'^login/$', user_login, name='login'),
+    # url(r'^register/$', user_register, name='register'),
+    url(r'^register/$', RegisterView.as_view(), name='register'),
+    # url(r'^login/$', user_login, name='login'),
+    url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', user_logout, name='logout'),
 
     # Profile management

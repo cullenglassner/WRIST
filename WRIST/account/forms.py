@@ -1,11 +1,12 @@
 from django import forms
+#from django.core.files.images import get_image_dimensions
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from django.contrib.auth import authenticate, get_user_model
 from WRIST import settings
 
 
-class UserCreationForm(forms.ModelForm):
+class UserRegistrationForm(forms.ModelForm):
     """
     Registration form
     """
@@ -15,6 +16,10 @@ class UserCreationForm(forms.ModelForm):
     }
     email = forms.EmailField(widget=forms.widgets.EmailInput, 
                              label=_("Email"), max_length=255)
+    first_name = forms.CharField(max_length=16,
+                                 label=_("First Name"))
+    last_name = forms.CharField(max_length=16,
+                                 label=_("Last Name"))
     uid = forms.CharField(widget=forms.widgets.TextInput, 
                           label=_("UID"), max_length=16)
     password1 = forms.CharField(widget=forms.PasswordInput, 
@@ -24,7 +29,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'uid', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'uid', 'password1', 'password2']
 
     def clean_username(self):
         # Since User.username is unique, this check is redundant,
@@ -50,22 +55,24 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
+        user = super(UserRegistrationForm, self).save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
 
 
-class UserLoginForm(forms.Form):
-    """
-    Login form
-    """
-    email = forms.EmailField(widget=forms.widgets.TextInput)
-    password = forms.CharField(widget=forms.widgets.PasswordInput)
+#class UserLoginForm(forms.Form):
+#    """
+#    Login form
+#    """
+#    email = forms.EmailField(widget=forms.widgets.TextInput)
+#    password = forms.CharField(widget=forms.widgets.PasswordInput)
 
-    class Meta:
-        fields = ['email', 'password']
+#    class Meta:
+#        fields = ['email', 'password']
 
 
 class UserEditForm(forms.ModelForm):

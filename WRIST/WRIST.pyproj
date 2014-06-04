@@ -88,9 +88,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="account\templates\account\edit.html" />
-    <Content Include="account\templates\account\form_login.html" />
-    <Content Include="account\templates\account\index.html" />
     <Content Include="account\templates\account\login.html" />
+    <Content Include="account\templates\account\index.html" />
     <Content Include="account\templates\account\profile.html" />
     <Content Include="account\templates\account\public_profile.html" />
     <Content Include="account\templates\account\register.html" />

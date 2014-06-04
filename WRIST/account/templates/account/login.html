@@ -16,30 +16,13 @@
 
     <section>
         {% if form.errors %}
-            <p>Your email and password didn't match, please try again.</p>
+            <p>Invalid email and password combination.</p>
         {% endif %}
 
-        <form method="post" id="login_form" action=".">
-            <table>
-            <tr>
-                <td><label for="id_email">Email:</label></td>
-                <td>{{ form.username }}</td>
-            </tr>
-            <tr>
-                <td><label for="id_password">Password:</label></td>
-                <td>{{ form.password }}</td>
-            </tr>
-            </table>
-            {% if next %}
-                <input type="hidden" name="next" value="{{ next }}" />
-            {% else %}
-                <input type="hidden" name="next" value="/contacts/" />
-            {% endif %}
-            <input type="submit" name="login" value="Login" />
+        <form method="post" id="login_form" action="."> {% csrf_token %}
+            {{ form.as_ul }}
+            <input type="hidden" name="next" value="/contacts/" />
+            <input type="submit" name="submit" value="Login" />
         </form>
     </section>
-    <div id="register">
-        <br /><br />
-        Don't have an account yet? <a href="/account/register/" title="Register">Register here</a>.
-    </div>
 {% endblock %}

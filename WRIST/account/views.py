@@ -11,8 +11,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
-# Account forms
+# Forms
 from account.forms import *
+from django.views.generic.edit import FormView
 
 
 
@@ -30,49 +31,71 @@ def is_mobile(request):
 
 
 
+
+
 """
         AUTHENTICATION VIEWS
 """
-# User Register View
-@csrf_exempt
-def user_register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            #return HttpResponseRedirect('/contacts/')
-            return HttpResponseRedirect('/')
-    else:
-        form = UserCreationForm()
-    context = {}
-    context.update(csrf(request))
-    context['form'] = form
-    context['is_mobile'] = is_mobile(request)
-    #Pass the context to a template
-    return render_to_response('account/register.html', context)
+class RegisterView(FormView):
+    template_name = 'account/register.html'
+    form_class = UserRegistrationForm
+    success_url = 'account/login.html'
 
-# User Login View
-@csrf_exempt
-def user_login(request):
-    """
-    Login view
-    """
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = authenticate(username=request.POST['username'],
-                                password=request.POST['password'])
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect('/contacts/')
-    else:
-        form = AuthenticationForm()
-    context = {}
-    context.update(csrf(request))
-    context['form'] = form
-    context['is_mobile'] = is_mobile(request)
-    #Pass the context to a template
-    return render_to_response('account/login.html', context)
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect('/account/login')
+
+class LoginView(FormView):
+    template_name = 'account/login.html'
+    form_class = AuthenticationForm
+    success_url = 'contacts/contact_list.html'
+
+    def form_valid(self, form):
+        user = authenticate(username=self.request.POST['username'],
+                            password=self.request.POST['password'])
+        if user is not None:
+            login(self.request, user)
+            return HttpResponseRedirect('/contacts/')
+        return HttpResponseRedirect('/account/login')
+
+#@csrf_exempt
+#def user_register(request):
+#    if request.method == 'POST':
+#        form = UserRegistrationForm(request.POST)
+#        if form.is_valid():
+#            form.save()
+#            #return HttpResponseRedirect('/contacts/')
+#            return HttpResponseRedirect('/')
+#    else:
+#        form = UserRegistrationForm()
+#    context = {}
+#    context.update(csrf(request))
+#    context['form'] = form
+#    context['is_mobile'] = is_mobile(request)
+#    #Pass the context to a template
+#    return render_to_response('account/register.html', context)
+
+#@csrf_exempt
+#def user_login(request):
+#    """
+#    Login view
+#    """
+#    if request.method == 'POST':
+#        form = AuthenticationForm(data=request.POST)
+#        if form.is_valid():
+#            user = authenticate(username=request.POST['username'],
+#                                password=request.POST['password'])
+#            if user is not None:
+#                login(request, user)
+#                return HttpResponseRedirect('/contacts/')
+#    else:
+#        form = AuthenticationForm()
+#    context = {}
+#    context.update(csrf(request))
+#    context['form'] = form
+#    context['is_mobile'] = is_mobile(request)
+#    #Pass the context to a template
+#    return render_to_response('account/login.html', context)
 
 # User Logout View
 @csrf_exempt
@@ -80,6 +103,8 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+
 
 
 
@@ -139,9 +164,6 @@ def user_profile_edit(request):
                                                  'is_mobile':is_mobile(request)})
 
 
-
-
-
 # Profiles as seen by contacts
 @csrf_protect
 @login_required(redirect_field_name='account/login.html')
@@ -150,11 +172,3 @@ def public_profile(request, user_uid):
     return render_to_response('account/public_profile.html', {'user':request.user,
                                                               'p_user':target_user,
                                                               'is_mobile':is_mobile(request)})
-
-# Add contact by UID
-#@csrf_protect
-#@login_required(redirect_field_name='account/login.html')
-#def add_contact(request, contact_uid):
-#    target_user = get_object_or_404(get_user_model(), uid=contact_uid)
-#    request.user.create_relationship(target_user)
-#    return HttpResponseRedirect('/contacts/')

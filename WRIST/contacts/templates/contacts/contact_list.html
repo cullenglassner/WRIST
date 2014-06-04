@@ -183,6 +183,8 @@
 
     <div id="table_header">
         {% if pending_contact_list %}
+            <a href="/contacts/pending/">{{ pending_contact_list|length }} Pending Contact{% if pending_contact_list|length > 1 %}s{% endif %}</a>
+            <!--
             <ul id="pending_contacts_nav">
                 <li>{{ pending_contact_list|length }} Pending contact{% if pending_contact_list|length > 1 %}s{% endif %}
                     <ul>
@@ -194,6 +196,7 @@
                     </ul>
                 </li>
             </ul>
+            -->
             <br />
         {% endif %}
         
